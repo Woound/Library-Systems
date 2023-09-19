@@ -1,4 +1,5 @@
 import time
+from colorama import Fore, Style
 
 # List of objects to store books
 books = [
@@ -39,11 +40,14 @@ books = [
     },
 ]
 
+# Students list which will store information such as the books borrowe by a student, and due dates etc...
+students = [{}]
 
-# Function to handle what the user would like to do
-def welcome():
+
+def main():
     user_choice = ""
-    print("Welcome to the Student Library!")
+    options = ["Borrow a book", "Return a book", "Find a book"]
+    print("Welcome to the Student Library!\n")
     time.sleep(1)
 
     input_message = "What would you like to do?\n"
@@ -55,22 +59,35 @@ def welcome():
     while user_choice not in map(str, range(1, len(options) + 1)):
         user_choice = input(input_message)
 
-    return user_choice
+    if user_choice == "1":
+        time.sleep(1)
+        book_choice = input("Enter the name of the book you would like to borrow: ")
+        for book in books:
+            if book["name"].lower() == str(book_choice).lower():
+                time.sleep(2)
+                print_book_info(book)
 
 
 # Function to output book information in a user-friendly manner.
 def print_book_info(book):
     print(f'Book name: {book["name"]}\nAuthor: {book["author"]}')
+    if book["borrowed"] == False:
+        confirmation = input("Would you like to borrow this book? (y/n)")
+        if confirmation == "y":
+            book["borrowed"] = True
+            book["borrower"] = "Test"
+            time.sleep(2)
+            print(book)
+            main()
+        else:
+            main()
+    else:
+        print(
+            f"{Fore.RED}This book is not currently available, reason: borrowed by someone else.{Style.RESET_ALL}\nRedirecting to the main menu..."
+        )
+        time.sleep(5)
+        main()
 
 
-# Students list which will store information such as the books borrowe by a student, and due dates etc...
-students = [{}]
-options = ["Borrow a book", "Return a book", "Find a book"]
-
-user_choice = welcome()
-if user_choice == "1":
-    time.sleep(1)
-    book_choice = input("Enter the name of the book you would like to borrow: ")
-    for book in books:
-        if book["name"].lower() == str(book_choice).lower():
-            print_book_info(book)
+if (__name__) == "__main__":
+    main()
