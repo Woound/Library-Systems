@@ -57,6 +57,7 @@ students = [
 ]
 
 
+# Main function
 def main():
     user_choice = ""
     options = ["Borrow a book", "Return a book", "Find a book"]
@@ -74,80 +75,92 @@ def main():
 
     # Borrowing process
     if user_choice == "1":
-        time.sleep(1)
-        book_choice = input("Enter the name of the book you would like to borrow: ")
-        for book in books:
-            if book["name"].lower() == str(book_choice).lower():
-                time.sleep(2)
-                handle_borrowing(book)
-        time.sleep(2)
-        print(
-            f"\n{Fore.RED}Book not found. Make sure the name is spelt correctly and try again!{Style.RESET_ALL}\nRedirecting to the main menu...\n"
-        )
-        time.sleep(2)
-        main()
+        handle_borrow_book()
 
     # Returning process
     elif user_choice == "2":
-        student_number = input("\nPlease enter your student id number: ")
-        student_email = input("Please enter your email: ")
-        for student in students:
-            if (
-                str(student["student_id"]) == student_number
-                and student["email"] == student_email
-            ):
-                if len(student["books_borrowed"]) == 0:
-                    print(
-                        f"\n{Fore.LIGHTYELLOW_EX}You have no borrowed books.{Style.RESET_ALL}"
-                    )
-                    print("\nRedirecting to main menu...")
-                    time.sleep(3)
-                    main()
-
-                return_choice = ""
-                borrowed_list = "\nWhich book would you like to return?\n"
-
-                for index, borrowed in enumerate(student["books_borrowed"]):
-                    borrowed_list += f"{index+1}) {borrowed}\n"
-                while return_choice not in map(
-                    str, range(1, len(student["books_borrowed"]) + 1)
-                ):
-                    return_choice = input(borrowed_list)
-                student["books_borrowed"].pop(int(return_choice) - 1)
-                time.sleep(3)
-                print(
-                    f"\n{Fore.LIGHTMAGENTA_EX}Your book has succesfully been returned. Thank you!{Style.RESET_ALL}"
-                )
-                time.sleep(2)
-                main()
-            else:
-                time.sleep(1)
-
-                print(
-                    f"{Fore.RED}Student not found, please check your details and try again. Redirecting to the main menu...{Style.RESET_ALL}\n"
-                )
-                time.sleep(2)
-                main()
+        handle_return_book()
 
     # Looking-up process
     elif user_choice == "3":
-        while True:
-            book_choice = input(
-                "Enter the name of the book you would like to find or (n) to exit: "
-            )
-            if book_choice == "n":
-                break
-            for book in books:
-                if book["name"].lower() == str(book_choice).lower():
-                    print(
-                        f'Book name: {book["name"]}\nAuthor: {book["author"]}\nAvailable to borrow: {not book["borrowed"]}'
-                    )
-                    time.sleep(2)
-                    main()
+        handle_find_book()
+
+
+def handle_borrow_book():
+    time.sleep(1)
+    book_choice = input("Enter the name of the book you would like to borrow: ")
+    for book in books:
+        if book["name"].lower() == str(book_choice).lower():
+            time.sleep(2)
+            handle_borrowing(book)
+    time.sleep(2)
+    print(
+        f"\n{Fore.RED}Book not found. Make sure the name is spelt correctly and try again!{Style.RESET_ALL}\nRedirecting to the main menu...\n"
+    )
+    time.sleep(2)
+    main()
+
+
+def handle_return_book():
+    student_number = input("\nPlease enter your student id number: ")
+    student_email = input("Please enter your email: ")
+    for student in students:
+        if (
+            str(student["student_id"]) == student_number
+            and student["email"] == student_email
+        ):
+            if len(student["books_borrowed"]) == 0:
+                print(
+                    f"\n{Fore.LIGHTYELLOW_EX}You have no borrowed books.{Style.RESET_ALL}"
+                )
+                print("\nRedirecting to main menu...")
+                time.sleep(3)
+                main()
+
+            return_choice = ""
+            borrowed_list = "\nWhich book would you like to return?\n"
+
+            for index, borrowed in enumerate(student["books_borrowed"]):
+                borrowed_list += f"{index+1}) {borrowed}\n"
+            while return_choice not in map(
+                str, range(1, len(student["books_borrowed"]) + 1)
+            ):
+                return_choice = input(borrowed_list)
+            student["books_borrowed"].pop(int(return_choice) - 1)
+            time.sleep(3)
             print(
-                f"\n{Fore.RED}Book not found. Make sure the name is spelt correctly and try again!{Style.RESET_ALL}\n"
+                f"\n{Fore.LIGHTMAGENTA_EX}Your book has succesfully been returned. Thank you!{Style.RESET_ALL}"
             )
             time.sleep(2)
+            main()
+        else:
+            time.sleep(1)
+
+            print(
+                f"{Fore.RED}Student not found, please check your details and try again. Redirecting to the main menu...{Style.RESET_ALL}\n"
+            )
+            time.sleep(2)
+            main()
+
+
+def handle_find_book():
+    while True:
+        book_choice = input(
+            "Enter the name of the book you would like to find or (n) to exit: "
+        )
+        if book_choice == "n":
+            break
+        for book in books:
+            if book["name"].lower() == str(book_choice).lower():
+                print(
+                    f'Book name: {book["name"]}\nAuthor: {book["author"]}\nAvailable to borrow: {not book["borrowed"]}'
+                )
+                time.sleep(2)
+                main()
+        print(
+            f"\n{Fore.RED}Book not found. Make sure the name is spelt correctly and try again!{Style.RESET_ALL}\n"
+        )
+        time.sleep(2)
         main()
 
 
