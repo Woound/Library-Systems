@@ -1,44 +1,97 @@
 import time
+import requests
 from colorama import Fore, Style
+import os
+from dotenv import load_dotenv
 
-# List of book objects
-books = [
-    {
-        "id": 1,
-        "name": "To Kill a Mockingbird",
-        "author": "Harper Lee",
-        "borrowed": False,
-        "borrower": 0,
-    },
-    {
-        "id": 2,
-        "name": "1984",
-        "author": "George Orwell",
-        "borrowed": False,
-        "borrower": 0,
-    },
-    {
-        "id": 3,
-        "name": "The Great Gatsby",
-        "author": "F. Scott Fitzgerald",
-        "borrowed": False,
-        "borrower": 0,
-    },
-    {
-        "id": 4,
-        "name": "Pride and Prejudice",
-        "author": "Jane Austen",
-        "borrowed": False,
-        "borrower": 0,
-    },
-    {
-        "id": 5,
-        "name": "The Catcher in the Rye",
-        "author": "J.D. Salinger",
-        "borrowed": False,
-        "borrower": 0,
-    },
-]
+load_dotenv()  # Take environment variables from the .env file
+
+# Access the environment variables from the .env file
+API_KEY = os.getenv("API_KEY")
+BASE_URL = os.getenv("BASE_URL")
+
+
+def get_random_books(books_amount=5):
+    random_query = "a"  # A simple query to get a variety of random books
+    params = {"q": random_query, "key": API_KEY, "maxResults": books_amount}
+
+    try:
+        response = requests.get(BASE_URL, params=params)
+        response_data = response.json()
+
+        # Handle the response data -> parse and extract the information needed
+        if response.status_code == 200:
+            if "items" in response_data:
+                received_books = response_data["items"]
+                books = []
+
+                for book in received_books:
+                    book_info = {
+                        "id": book["id"],
+                        "title": book["volumeInfo"].get("title", "Title not available"),
+                        "author": book["volumeInfo"].get(
+                            "authors", "Author not available"
+                        )[0],
+                        "publisher": book["volumeInfo"].get(
+                            "publisher", "Publisher not available"
+                        ),
+                        "borrowed": False,
+                        "borrower": 0,
+                    }
+                    books.append(book_info)
+                return books
+            else:
+                return []
+        else:
+            print("Error:", response_data["error"]["message"])
+            return []
+
+    except requests.exceptions.RequestException as e:
+        print("Error:", e)
+        return []
+
+
+books = get_random_books(books_amount=5)
+print(books)
+
+# # List of book objects
+# books = [
+#     {
+#         "id": 1,
+#         "name": "To Kill a Mockingbird",
+#         "author": "Harper Lee",
+#         "borrowed": False,
+#         "borrower": 0,
+#     },
+#     {
+#         "id": 2,
+#         "name": "1984",
+#         "author": "George Orwell",
+#         "borrowed": False,
+#         "borrower": 0,
+#     },
+#     {
+#         "id": 3,
+#         "name": "The Great Gatsby",
+#         "author": "F. Scott Fitzgerald",
+#         "borrowed": False,
+#         "borrower": 0,
+#     },
+#     {
+#         "id": 4,
+#         "name": "Pride and Prejudice",
+#         "author": "Jane Austen",
+#         "borrowed": False,
+#         "borrower": 0,
+#     },
+#     {
+#         "id": 5,
+#         "name": "The Catcher in the Rye",
+#         "author": "J.D. Salinger",
+#         "borrowed": False,
+#         "borrower": 0,
+#     },
+# ]
 
 # Students list which will store information such as the books borrowed by a student, and due dates etc...
 students = [
