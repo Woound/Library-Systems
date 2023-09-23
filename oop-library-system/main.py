@@ -18,12 +18,17 @@ def setup():
     book4 = Book(4, "The Catcher in the Rye", "J.D. Salinger", "Little, Brown")
 
     books = [book1, book2, book3, book4]
+    students = [student1, student2]
 
     library.add_books(books)
+    library.add_students(students)
+
+
+# Set up outside of main to prevent duplicates.
+setup()
 
 
 def main():
-    setup()
     user_choice = ""
     options = ["Borrow a book", "Return a book", "Find a book"]
 
@@ -57,15 +62,49 @@ def handle_borrow_book():
     print(
         f"\n{Fore.MAGENTA}These are the books you can currently borrow:{Style.RESET_ALL}"
     )
+
+    # Display the list of books available in the library
     library.display_books()
 
     while True:
-        book_choice = input(
-            "\nPlease enter the index of the book you would like to order: "
-        )
-        if 0 < int(book_choice) <= len(library.books):
-            print("Good")
-            break
+        # Try-catch block in case user attempts to enter a value other than an integer.
+        try:
+            book_choice = input(
+                "\nPlease enter the index of the book you would like to borrow: "
+            )
+            if 0 < int(book_choice) <= len(library.books):
+                students = library.get_students()
+                student_id = input("Enter your student id: ")
+                student_email = input("Enter your student email to confirm: ")
+                for student in students:
+                    if (
+                        student.student_id == int(student_id)
+                        and student.email == student_email
+                    ):
+                        book = library.get_book(int(book_choice) - 1)
+                        book.borrow(student_id)
+                        # print(f"\n{book.info()}\n")
+                        print(
+                            f"\n{Fore.LIGHTYELLOW_EX}Succesfully borrowed! Redirecting to main menu...{Style.RESET_ALL}"
+                        )
+                        time.sleep(3)
+                        # Redirecting to main menu
+                        main()
+                    else:
+                        print(
+                            f"\n{Fore.RED}Invalid! Student not found, please try again.{Style.RESET_ALL}"
+                        )
+                        break
+            else:
+                print(
+                    f"\n{Fore.RED}Option does not exist, please check again.{Style.RESET_ALL}"
+                )
+                continue
+
+        except ValueError:
+            print(
+                f"\n{Fore.RED}Invalid value, please enter an integer!{Style.RESET_ALL}"
+            )
 
 
 if __name__ == "__main__":

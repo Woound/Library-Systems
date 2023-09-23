@@ -14,9 +14,6 @@ class Book:
         if not self.borrowed:
             self.borrowed = True
             self.borrower = studentID
-            return True
-        else:
-            return False
 
     def info(self):
         info_message = f"Book name: {self.title}\nAuthor: {self.author}\nPublisher: {self.publisher}\nAvailable to borrow: {not self.borrowed}"
